@@ -2,10 +2,9 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Course  {
+public class Course  extends Student{
     private String course;
-
-
+    Student student = new Student(getStudentName() , getId() , getPassWord());
 
 
     private ArrayList<Course> courses = new ArrayList<>();
@@ -18,7 +17,8 @@ public class Course  {
         this.courses = courses;
     }
 
-    public Course(String course) {
+    public Course(String course, String studentName, int id , String passWord) {
+        super(studentName,id,passWord);
         this.course = course;
     }
 
@@ -28,8 +28,8 @@ public class Course  {
     public String getCourse(){
         return course;
     }
-    public Course(){
-
+    public Course(String studentName, int id , String passWord){
+    super(studentName,id,passWord);
     }
 
     public void addCourse(Course course) {

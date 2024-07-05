@@ -1,44 +1,75 @@
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Student  implements StudentManagement {
-    ArrayList<Course> courses = new ArrayList<>();
-    Course course = new Course();
-    Admin admin = new Admin();
+public class Student  {
 
-    @Override
-    public void addCourse() {
+    private ArrayList<Student> students = new ArrayList<>();
 
-    }
-    //    public void displayCourses() {
-//        if (courses.isEmpty()) {
-//            JOptionPane.showMessageDialog(null, "No courses available.");
-//            return;
-//        }
-//
-//        // Using simple string concatenation to build the message
-//        String message = "Courses:\n";
-//        for (Course course : courses) {
-//            message += course.getCourses() + "\n";
-//        }
-//
-//        // Display the courses using JOptionPane
-//        JOptionPane.showMessageDialog(null, message, "Course List", JOptionPane.INFORMATION_MESSAGE);
-//    }
-
-    @Override
-    public void addInformation() {
-
+    public ArrayList<Student> getStudents() {
+        return students;
     }
 
-    @Override
-    public void deleteCourse() {
+    public void setStudents(ArrayList<Student> students) {
+        this.students = students;
+    }
+    private String student;
+    private String studentName;
 
+    public String getStudent() {
+        return student;
     }
 
-    @Override
-    public void getGrades() {
+    public void setStudent(String student) {
+        this.student = student;
+    }
 
+    private int id;
+    private String passWord;
+
+    public String getPassWord() {
+        return passWord;
+    }
+
+    public void setPassWord(String passWord) {
+        this.passWord = passWord;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
+    }
+
+    public Student(String studentName , int id , String passWord) {
+        this.studentName = studentName;
+        this.id = id;
+        this.passWord = passWord;
+    }
+    public Student(String studentName  , String passWord) {
+        this.studentName = studentName;
+        this.passWord = passWord;
+    }
+
+    public int getId(){
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void addStudent(Student student) {
+        students.add(student);
+    }
+     public  boolean studentsLoop(String studentName , String passWord) {
+        int count=1;
+        for (Student student : students) {
+            if(studentName == getStudentName() && passWord == getPassWord()){
+                return true;
+            }
+            count++;
+        }
+        return false;
     }
 }

@@ -1,67 +1,37 @@
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Admin extends Course implements StudentManagement{
-
+    Course a = new Course("m", 2 ,"22");
     public Admin(String course, String studentName, int id, String passWord) {
         super(course, studentName, id, passWord);
     }
-
-    public Admin(String studentName, int id, String passWord) {
-        super(studentName, id, passWord);
-    }
-
     @Override
     public void getGrades() {
-
-    }
-
-
-    public void run(){
-        String[] options = {"Select from the Choices Below", "Student" , "Admin"};
-        String choice = (String) JOptionPane.showInputDialog(null,
-                "Select one of Options",
-                "Student Management System",
-                JOptionPane.DEFAULT_OPTION,
-                null,
-                options,
-                options[0]);
-        switch(choice) {
-            case "Select from the Choices Below" :
-                JOptionPane.showMessageDialog(null,
-                        "Please select one of valid options",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                run();
-            case "Student" :
-                String[] choiceOfStudent = {"Select from the Choices Below" , "Add My Information","Log In", "Add Courses", "Get my Grades","Delete Course", "Back to System"};
-                String studentChoice = (String) JOptionPane.showInputDialog(null,
-                        "Select one of the Options",
-                        "Student's Interface",
-                        JOptionPane.DEFAULT_OPTION,
-                        null,
-                        choiceOfStudent,
-                        choiceOfStudent[0]);
-                if(studentChoice == "Select from the Choices Below"){
-                    JOptionPane.showMessageDialog(null, "select a choice ", " ERROR", JOptionPane.ERROR_MESSAGE);
-                } else if (studentChoice == "Add My Information") {
-                    addInformation();
-                } else if (studentChoice == "Add Courses") {
-                    addCourse();
-                } else if (studentChoice == "Get my Grades") {
-
-                } else if (studentChoice == "Log In") {
-                    login();
-                } else if (studentChoice == "Delete Course") {
-                    deleteCourse();
-                } else if (studentChoice == "Back to System") {
-                    run();
-                }else{
-                    System.exit(0);  //when press exits doesn't give an error!!!!
-                }
+        ArrayList<String> oldVersion = new ArrayList<>();
+        oldVersion.add("Old Chemistry");
+        oldVersion.add("Old Physics");
+        oldVersion.add("Old Programming");
+        setOldCourses(oldVersion);
+//        for( String str : oldVersion){
+//            JOptionPane.showMessageDialog(null ,
+//                      count + str + " Grade is 90 "   );
+//            count++;
+//        }
+            String str="";
+            String answer="All Grades  \n";
+            int count=0;
+            int c = 50;
+            for (String counter : oldVersion) {
+                str=" "+ "Course "+count+": "+oldVersion.get(count)+ "Grade is "+c+
+                        "\n";
+                answer+=str;
+                count++;
+                c = c +20;
+            }
+            JOptionPane.showMessageDialog(null,answer);
         }
-    }
-
 
     public boolean noSpecialCharacters(String str){
         for (char c : str.toCharArray()){
@@ -109,10 +79,9 @@ public class Admin extends Course implements StudentManagement{
                 JOptionPane.showMessageDialog(null, "Course is added SUCCESSFULLY");
         }else{
             JOptionPane.showMessageDialog(null, "Invalid input!","ERROR" , JOptionPane.ERROR_MESSAGE);
-            run();
+            relogIn();
         }
         displayCourses(getCourses());
-        run();
     }
 
 
@@ -130,26 +99,43 @@ public class Admin extends Course implements StudentManagement{
 
             } else{
                 JOptionPane.showMessageDialog(null, "Invalid input!","ERROR" , JOptionPane.ERROR_MESSAGE);
-                run();
+                runStudent();
             }
             } else{
                 JOptionPane.showMessageDialog(null, "Invalid input!","ERROR" , JOptionPane.ERROR_MESSAGE);
-                run();
+                runStudent();
             }
             } else{
             JOptionPane.showMessageDialog(null, "Invalid input!","ERROR" , JOptionPane.ERROR_MESSAGE);
-            run();
-            }
+            runStudent();
+        }
         displayStudents(getStudents());
-        run();
+        runStudent();
 
     }
 
 
 
+    public void deleteAndUpdateStudent(){
+        String studentName = JOptionPane.showInputDialog("Please write your old name");
+        String id = JOptionPane.showInputDialog("Please write your old id");
+        String passWord = JOptionPane.showInputDialog("Please write your old password");
+        Student studentToDelete = findStudentByNameAndPassword(studentName , passWord  , Integer.parseInt(id));
+        if(studentToDelete != null){
+            getStudents().remove(studentToDelete);
+            String studentNameNew = JOptionPane.showInputDialog("Please write your New name");
+            String studentIdNew = JOptionPane.showInputDialog("Please write your new Id ");
+            String studentPasswordNew = JOptionPane.showInputDialog("Please write your new password");
+            Student newDataStudent  = new Student(studentNameNew , Integer.parseInt(studentIdNew) , studentPasswordNew);
+            addStudent(newDataStudent);
+            displayStudents(getStudents());
 
 
-
+        }else{
+            JOptionPane.showMessageDialog(null, "Student not found");
+            relogIn();
+        }
+    }
 
     public void deleteCourse(){
         String courseName = JOptionPane.showInputDialog("Please write the name of the course you want to Delete");
@@ -160,9 +146,20 @@ public class Admin extends Course implements StudentManagement{
             displayCourses(getCourses());
         }else{
             JOptionPane.showMessageDialog(null, "Course not found");
+            relogIn();
         }
     }
 
+    public Student findStudentByNameAndPassword(String studentName , String passWord , int id){
+                for (int i = 0; i < getStudents().size(); i++) {
+                    Student modifiedStudent = getStudents().get(i);
+                    if (modifiedStudent.getStudentName().equals(studentName) && modifiedStudent.getPassWord().equals(passWord) && modifiedStudent.getId() == id) {
+                        return modifiedStudent;
+                    }
+
+                }
+        return null;
+    }
     public Course findCourseByName(String course){
         if(course != null &&!course.isBlank() && !course.isEmpty()&& noSpecialCharacters(course)){
             for(int i = 0 ; i < getAllCourses().size(); i++){
@@ -179,50 +176,174 @@ public class Admin extends Course implements StudentManagement{
         return getCourses();
     }
 
-    public void login() {
-        String studentName = JOptionPane.showInputDialog("Enter Your Name");
-        String passWord = JOptionPane.showInputDialog("Enter Your Password");
-
-        boolean isAuthenticated = false;
-        for (Student student : getStudents()) {
-            if (student.getStudentName().equals(studentName) && student.getPassWord().equals(passWord)) {
-                isAuthenticated = true;
-                break;
-            }
-        }
-
-        if (isAuthenticated) {
-            String[] options = {"Select", "Add Courses", "Get my Grades", "Delete Course", "Back to System"};
-            String choice = (String) JOptionPane.showInputDialog(null,
-                    "Select one of Options",
-                    "Student Management System",
-                    JOptionPane.DEFAULT_OPTION,
-                    null,
-                    options,
-                    options[0]);
-            switch (choice) {
-                case "Select":
-                    JOptionPane.showMessageDialog(null,
-                            "Please select one of options",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    run();
-                case "Add Courses":
-                    addCourse();
-
-                case "Get my Grades":
-
-                case "Delete Course":
-                    deleteCourse();
-
-                case "Back to System":
-                    run();
-                default:
-                    System.exit(0);
-            }
-        } else {
-            JOptionPane.showMessageDialog(null, "Invalid login", "ERROR", JOptionPane.ERROR_MESSAGE);
-            run();
+    public void run(){
+        String[] options = {"Select from the Choices Below", "Student" , "Admin"};
+        String choice = (String) JOptionPane.showInputDialog(null,
+                "Select one of Options",
+                "Student Management System",
+                JOptionPane.DEFAULT_OPTION,
+                null,
+                options,
+                options[0]);
+        switch(choice) {
+            case "Select from the Choices Below" :
+                JOptionPane.showMessageDialog(null,
+                        "Please select one of valid options",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                run();
+            case "Admin" :
+                JOptionPane.showMessageDialog(null , "I was kidding just select Student's option xD",
+                        "wasn't assigned to make admin interface!",
+                        JOptionPane.ERROR_MESSAGE);
+                run();
+            case "Student" :
+                String[] choiceOfStudent = {"Select from the Choices Below" , "Log In","Add My Information","Back to main"};
+                String studentChoice = (String) JOptionPane.showInputDialog(null,
+                        "Select one of the Options",
+                        "Student's Interface",
+                        JOptionPane.DEFAULT_OPTION,
+                        null,
+                        choiceOfStudent,
+                        choiceOfStudent[0]);
+                switch (studentChoice) {
+                    case "Select from the Choices Below":
+                        JOptionPane.showMessageDialog(null, "select a choice ", " ERROR", JOptionPane.ERROR_MESSAGE);
+                        runStudent();
+                    case "Add My Information":
+                        addInformation();
+                        runStudent();
+                    case "Log In":
+                        login();
+                    case "Back to main":
+                        run();
+                    default:
+                        System.exit(0);  //when press exits doesn't give an error!!!!
+                        break;
+                }
         }
     }
+    public void runStudent() {
+        String[] choiceOfStudent = {"Select from the Choices Below" , "Log In","Add My Information","Back to main"};
+        String studentChoice = (String) JOptionPane.showInputDialog(null,
+                "Select one of the Options",
+                "Student's Interface",
+                JOptionPane.DEFAULT_OPTION,
+                null,
+                choiceOfStudent,
+                choiceOfStudent[0]);
+        if(studentChoice == "Select from the Choices Below"){
+            JOptionPane.showMessageDialog(null, "select a choice ", " ERROR", JOptionPane.ERROR_MESSAGE);
+            runStudent();
+        } else if (studentChoice == "Add My Information") {
+            addInformation();
+        }else if (studentChoice == "Log In") {
+            login();
+        }
+        else if(studentChoice == "Back to main"){
+            run();
+        }else{
+            System.exit(0);  //when press exits doesn't give an error!!!!
+        }
+    }
+    private boolean isAlreadyAuthenticated = false;
+    public void login() {
+        if (!isAlreadyAuthenticated) {
+            String studentName = JOptionPane.showInputDialog("Enter Your Name");
+            if(studentName != null && !studentName.isEmpty() && !studentName.isBlank() &&noSpecialCharacters(studentName)) {
+                String passWord = JOptionPane.showInputDialog("Enter Your Password");
+                if (passWord != null && !passWord.isEmpty() && !passWord.isBlank()) {
+
+                    boolean isAuthenticated = false;
+                    for (Student student : getStudents()) {
+                        if (student.getStudentName().equals(studentName) && student.getPassWord().equals(passWord)) {
+                            isAuthenticated = true;
+                            break;
+                        }
+                    }
+
+                    if (!isAuthenticated) {
+                        JOptionPane.showMessageDialog(null, "Invalid login", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        run();
+                    }
+
+                }else{              JOptionPane.showMessageDialog(null, "Invalid login", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    run();}
+
+                String[] options = {"Add Courses", "Get my Grades", "Delete Course", "Update my Information", "Back to main"};
+                String choice = (String) JOptionPane.showInputDialog(
+                        null,
+                        "Select one of Options",
+                        "Student Management System",
+                        JOptionPane.DEFAULT_OPTION,
+                        null,
+                        options,
+                        options[0]);
+
+                if (choice == null) {
+                    System.exit(0);
+                }
+
+                switch (choice) {
+                    case "Add Courses":
+                        addCourse();
+                        relogIn();
+                    case "Get my Grades":
+                        getGrades();
+                        relogIn();
+                    case "Delete Course":
+                        deleteCourse();
+                        relogIn();
+                    case "Update my Information":
+                        deleteAndUpdateStudent();
+                        relogIn();
+                    case "Back to main":
+                        run();
+                    default:
+                        System.exit(0);
+                        break;
+                }
+            }else {                JOptionPane.showMessageDialog(null, "Invalid login", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    run();
+            }
+        }else{                JOptionPane.showMessageDialog(null, "Invalid login", "ERROR", JOptionPane.ERROR_MESSAGE);
+                run();
+        }
+    }
+    public void relogIn(){
+        String[] options = {"Add Courses", "Get my Grades", "Delete Course","Update my Information" ,"Back to main"};
+        String choice = (String) JOptionPane.showInputDialog(
+                null,
+                "Select one of Options",
+                "Student Management System",
+                JOptionPane.DEFAULT_OPTION,
+                null,
+                options,
+                options[0]);
+
+        if (choice == null) {
+            System.exit(0);
+        }
+
+        switch (choice) {
+            case "Add Courses":
+                addCourse();
+                relogIn();
+            case "Get my Grades":
+                getGrades();
+                relogIn();
+            case "Delete Course":
+                deleteCourse();
+                relogIn();
+            case "Update my Information" :
+                deleteAndUpdateStudent();
+                relogIn();
+            case "Back to main":
+                run();
+            default:
+                System.exit(0);
+                break;
+        }
+    }
+
 }

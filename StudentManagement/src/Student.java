@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Student  {
-
     private ArrayList<Student> students = new ArrayList<>();
 
     public ArrayList<Student> getStudents() {
@@ -12,6 +11,7 @@ public class Student  {
     public void setStudents(ArrayList<Student> students) {
         this.students = students;
     }
+
     private String student;
     private String studentName;
 
@@ -42,6 +42,7 @@ public class Student  {
         this.studentName = studentName;
     }
 
+
     public Student(String studentName , int id , String passWord) {
         this.studentName = studentName;
         this.id = id;
@@ -62,14 +63,5 @@ public class Student  {
     public void addStudent(Student student) {
         students.add(student);
     }
-     public  boolean studentsLoop(String studentName , String passWord) {
-        int count=1;
-        for (Student student : students) {
-            if(studentName == getStudentName() && passWord == getPassWord()){
-                return true;
-            }
-            count++;
-        }
-        return false;
-    }
+
 }
